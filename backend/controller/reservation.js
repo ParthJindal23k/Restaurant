@@ -1,5 +1,4 @@
-const ErrorHandler = require("../error/error.js");
-
+const {ErrorHandler} = require("../error/error.js")
 const reservation = require("../Models/reservationSchema.js");
 
  const sendreservation = async (req, res, next) => {
@@ -7,6 +6,8 @@ const reservation = require("../Models/reservationSchema.js");
     if (!firstname || !lastname || !email || !phone || !date || !time) {
         return next(new ErrorHandler("Please fill full reservation form!", 400));
     }
+
+
 
     try {
         await reservation.create({ firstname, lastname, email, phone, date, time });
@@ -16,11 +17,13 @@ const reservation = require("../Models/reservationSchema.js");
         });
     } catch (err) {
         if (err.name === "ValidationError") {
-            const ValidationErrors = Object.values(err.errors).map(
+            const validationErrors = Object.values(err.errors).map(
                 (e) => e.message
             );
-            return next(new ErrorHandler(ValidationErrors.join(", "), 400));
+            return next(new ErrorHandler(validationErrors.join(", "), 400));
         }
+
+        return next(err);
     };
 }
 
